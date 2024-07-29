@@ -1,4 +1,3 @@
-
 # siterender
 
 siterender is a Node.js application that renders web pages listed in a sitemap and saves the rendered HTML
@@ -7,7 +6,7 @@ scraping, and ensuring content is pre-rendered for SEO and social media sharing 
 
 The application is unusual as all the code was "written" by ChatGPT 4o.  Some interactive work was required
 to get the source code into its current form, but you can see the original prompt in the file
-prompt/siterender.prompt
+[prompt/siterender.prompt](./prompt/siterender.prompt)
 
 ## Features
 
@@ -82,7 +81,7 @@ The script can be executed from the command line with various options:
 
 ## License
 
-This project is licensed under a BSD 3-Clause License.
+This project is licensed under a BSD 3-Clause License.  See [LICENSE](./LICENSE)
 
 ## Contributing
 
