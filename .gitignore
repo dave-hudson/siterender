@@ -1,0 +1,15 @@
+# Ignore temp files
+*~
+
+# Ignore build files
+siterender.js
+
+# Ignore coverage files
+coverage/
+
+# Ignore node modules
+node_modules/
+package-lock.json
+
+# Ignore Mac system files
+.DS_Store
