@@ -89,4 +89,5 @@ Suggestions are welcome, including code improvements.
 
 ## Contact
 
-For any inquiries or issues, please contact the project maintainer.
+For any inquiries or issues, please contact the project maintainer - you can find contant details at
+[davehudson.io](https://davehudson.io/about).
