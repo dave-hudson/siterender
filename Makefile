@@ -2,25 +2,13 @@
 
 .PHONY: all
 
-all: siterender.js
+all: build/siterender.mjs
 
 #
 # Rule to pre-render all the pages of the site.
 #
-siterender.js: src/siterender.ts
-	tsc \
-		--strict \
-		--target esnext \
-		--module es6 \
-		--esModuleInterop true \
-		--moduleResolution node \
-		--noImplicitOverride \
-		--noImplicitReturns \
-		--noPropertyAccessFromIndexSignature \
-		--noFallthroughCasesInSwitch \
-		--noUnusedLocals \
-		--outDir . \
-		src/siterender.ts
+build/siterender.mjs: src/logic.ts src/siterender.ts
+	npm run build
 
 #
 # Rules to clean up after builds.
@@ -28,12 +16,14 @@ siterender.js: src/siterender.ts
 .PHONY: clean 
 
 clean:
-	rm -f siterender.js
+	rm -f build/siterender.mjs
+	rm -f build/*.map
 
 .PHONY: realclean
 
 realclean: clean
 	rm -fr coverage
+	rm -fr build
 
 #
 # Run tests.

@@ -1,15 +1,21 @@
 {
-    "compilerOptions": {
-        "target": "es6",
-        "module": "commonjs",
-        "strict": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "skipLibCheck": true,
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "resolveJsonModule": true
-    },
-    "include": ["src/**/*.ts"],
-    "exclude": ["node_modules", "**/*.test.ts"]
+  "compilerOptions": {
+    "target": "ES2015",            // Specify ECMAScript target version
+    "module": "ESNext",            // Use ESNext module resolution
+    "sourceMap": true,             // Generate source maps
+    "declaration": false,          // Do not generate declaration files
+    "removeComments": true,        // Remove comments from output
+    "strict": true,                // Enable all strict type-checking options
+    "esModuleInterop": true,       // Enable interoperability between CommonJS and ES Modules
+    "moduleResolution": "node"     // Ensure module resolution is set to node
+  },
+  "include": [
+    "./src/**/*.ts"                // Specify the files to be included in the compilation
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+    "./src/**/*.test.ts"
+  ]
 }
+

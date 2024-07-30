@@ -14,7 +14,7 @@ import {
     launchBrowserWithRetries,
     closeBrowserWithRetries,
     main
-} from './siterender';
+} from './logic';
 
 jest.mock('axios');
 jest.mock('fs', () => ({
@@ -41,8 +41,8 @@ jest.mock('puppeteer', () => {
     };
 });
 
-jest.mock('./siterender', () => {
-    const originalModule = jest.requireActual('./siterender');
+jest.mock('./logic', () => {
+    const originalModule = jest.requireActual('./logic');
     return {
         ...originalModule,
         processSitemapIndex: jest.fn(),
@@ -168,10 +168,9 @@ describe('renderPage', () => {
         const content = await renderPage(browser, 'http://example.com', 3);
         expect(content).toBe('<html></html>');
         expect(mockPage.goto).toHaveBeenCalledTimes(2);
-    });
+    }, 30000);
 
     it('should throw error after max retries', async () => {
-        jest.setTimeout(30000); // Set timeout to 30 seconds for this test
         mockPage.goto.mockRejectedValue(new Error('Navigation error'));
         const browser = await puppeteer.launch();
         await expect(renderPage(browser, 'http://example.com', 3)).rejects.toThrow('Navigation error');
