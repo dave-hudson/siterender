@@ -1,7 +1,7 @@
 {
-  "name": "your-project-name",
-  "version": "1.0.0",
-  "description": "Your project description",
+  "name": "siterender",
+  "version": "0.1.0",
+  "description": "Site rendering application",
   "type": "module",
   "scripts": {
     "build": "rollup -c",
