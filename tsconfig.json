@@ -1,16 +1,16 @@
 {
   "compilerOptions": {
-    "target": "ES2015",            // Specify ECMAScript target version
-    "module": "ESNext",            // Use ESNext module resolution
-    "sourceMap": true,             // Generate source maps
-    "declaration": false,          // Do not generate declaration files
-    "removeComments": true,        // Remove comments from output
-    "strict": true,                // Enable all strict type-checking options
-    "esModuleInterop": true,       // Enable interoperability between CommonJS and ES Modules
-    "moduleResolution": "node"     // Ensure module resolution is set to node
+    "target": "ES2015",
+    "module": "ESNext",
+    "sourceMap": true,
+    "declaration": false,
+    "removeComments": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node"
   },
   "include": [
-    "./src/**/*.ts"                // Specify the files to be included in the compilation
+    "./src/**/*.ts"
   ],
   "exclude": [
     "node_modules",
