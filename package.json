@@ -7,6 +7,7 @@
     "build": "rollup -c",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
+  "license": "BSD-3-Clause",
   "dependencies": {
     "axios": "^0.24.0",
     "fast-xml-parser": "^4.4.1",
