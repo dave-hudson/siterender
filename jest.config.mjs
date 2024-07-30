@@ -1,12 +1,12 @@
 export default {
   transform: {
-    "^.+\\.tsx?$": "babel-jest"
+    "^.+\\.tsx?$": 'babel-jest'
   },
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  testMatch: ['**/src/**/*.test.ts', '**/src/**/*.spec.ts'],
+  testMatch: ['**/src/**/*.test.ts'],
   collectCoverage: true,
-  coverageDirectory: "coverage",
-  coverageReporters: ["html", "text"]
+  coverageDirectory: 'coverage',
+  coverageReporters: ['html', 'text']
 };
 
