@@ -10,7 +10,8 @@
   "dependencies": {
     "axios": "^0.24.0",
     "fast-xml-parser": "^4.4.1",
-    "puppeteer": "^22.14.0"
+    "puppeteer": "^22.14.0",
+    "yargs": "^17.7.2"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -20,7 +21,6 @@
     "@rollup/plugin-babel": "^6.0.4",
     "@rollup/plugin-commonjs": "^26.0.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-replace": "^5.0.7",
     "@rollup/plugin-typescript": "^11.1.6",
     "@types/jest": "^27.5.2",
     "babel-jest": "^27.5.1",
