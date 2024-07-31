@@ -18,7 +18,7 @@ const parser = new XMLParser();
  */
 export async function fetchSitemap(url: string): Promise<string> {
     try {
-        const response = await axios.get(url, { maxRedirects: 10 });
+        const response = await axios.get(url, {maxRedirects: 10});
         return response.data;
     } catch (error: any) {
         console.error(`Failed to fetch sitemap: ${error.message}`);
@@ -74,7 +74,7 @@ export function getFilePath(url: string, outputDir: string): string {
  */
 export async function saveRenderedPage(filePath: string, content: string): Promise<void> {
     try {
-        await fs.promises.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.promises.mkdir(path.dirname(filePath), {recursive: true});
         await fs.promises.writeFile(filePath, content);
     } catch (error: any) {
         console.error(`Failed to save rendered page: ${error.message}`);
@@ -94,7 +94,7 @@ export async function renderPage(browser: Browser, url: string, retries: number)
         let page;
         try {
             page = await browser.newPage();
-            await page.goto(url, { waitUntil: 'networkidle2', timeout: 60000 });
+            await page.goto(url, {waitUntil: 'networkidle2', timeout: 60000});
             const content = await page.content();
             return content;
         } catch (error: any) {
@@ -115,6 +115,7 @@ export async function renderPage(browser: Browser, url: string, retries: number)
             }
         }
     }
+
     throw new Error(`Failed to render ${url} after ${retries + 1} attempts`);
 }
 
@@ -132,13 +133,15 @@ export async function processSitemapUrls(urls: string[], browser: Browser, outpu
         while (queue.length) {
             const url = queue.shift();
             if (!url) continue;
+
             const filePath = getFilePath(url, outputDir);
             try {
-                await fs.promises.rm(filePath, { force: true });
+                await fs.promises.rm(filePath, {force: true});
             } catch (error: any) {
                 console.error(`Failed to delete old file ${filePath}: ${error.message}`);
                 continue;
             }
+
             try {
                 const content = await renderPage(browser, url, retries);
                 await saveRenderedPage(filePath, content);
@@ -165,6 +168,7 @@ export async function processSitemapIndex(urlOrFilePath: string): Promise<string
     } else {
         sitemapContent = await fs.promises.readFile(urlOrFilePath, 'utf-8');
     }
+
     const parsedSitemap = parseSitemap(sitemapContent);
     let urls: string[] = [];
 
