@@ -2,7 +2,7 @@
 *~
 
 # Ignore build files
-siterender.js
+build/
 
 # Ignore coverage files
 coverage/
