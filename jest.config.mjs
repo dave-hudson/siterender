@@ -1,6 +1,6 @@
 export default {
   transform: {
-    "^.+\\.tsx?$": 'babel-jest'
+    "^.+\\.tsx?$": 'ts-jest'
   },
   testEnvironment: 'node',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],

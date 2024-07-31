@@ -1,19 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer from 'puppeteer';
 import {
     fetchSitemap,
     parseSitemap,
     replaceUrl,
     getFilePath,
     saveRenderedPage,
-    renderPage,
-    processSitemapUrls,
-    processSitemapIndex,
-    launchBrowserWithRetries,
-    closeBrowserWithRetries,
-    main
+    renderPage
 } from './logic';
 
 jest.mock('axios');
@@ -51,10 +46,6 @@ jest.mock('./logic', () => {
         closeBrowserWithRetries: jest.fn()
     };
 });
-
-const mockArgv = (args: string[]) => {
-    process.argv = ['node', 'jest', ...args];
-};
 
 describe('fetchSitemap', () => {
     let consoleErrorSpy: jest.SpyInstance;
