@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer, {Browser} from 'puppeteer';
 import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
+import {hideBin} from 'yargs/helpers';
 import axios from 'axios';
-import { XMLParser } from 'fast-xml-parser';
+import {XMLParser} from 'fast-xml-parser';
 import fs from 'fs';
 import path from 'path';
 import os from 'os';
