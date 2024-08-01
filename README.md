@@ -85,7 +85,9 @@ This project is licensed under a BSD 3-Clause License.  See [LICENSE](./LICENSE)
 
 ## Contributing
 
-Suggestions are welcome, including code improvements.
+The aim of the project is to see how far we can go with having ChatGPT build the software.  Please feel free to submit
+PRs against the prompt, or to suggest prompts that will generate a code change you might like to see.  While you can submit
+PRs against the code, these won't be merged, but can serve to improve the prompt that allows the code to be evolved.
 
 ## Contact
 
