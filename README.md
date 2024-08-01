@@ -31,7 +31,7 @@ npm install
 The script can be executed from the command line with various options:
 
 ```sh
-./siterender.ts [options]
+node siterender.js [options]
 ```
 
 ## Options
