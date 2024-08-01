@@ -81,7 +81,7 @@ node siterender.js [options]
 
 ## License
 
-This project is licensed under a BSD 3-Clause License.  See [LICENSE](./LICENSE)
+This project is released under a BSD 3-Clause License.  See [LICENSE](./LICENSE)
 
 ## Contributing
 
