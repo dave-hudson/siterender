@@ -90,10 +90,9 @@ export async function fetchSitemap(url: string): Promise<string> {
         const response = await axios.get(url, { maxRedirects: 5 });
         return response.data;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            throw new Error(`Failed to fetch sitemap from ${url}: ${error.message}`);
-        }
-        throw new Error(`Failed to fetch sitemap from ${url}: ${String(error)}`);
+        const errorMessage = `Failed to fetch sitemap from ${url}: ${error instanceof Error ? `Error: ${error.message}` : `Error: ${String(error)}`}`;
+        console.error(errorMessage);
+        throw new Error(errorMessage);
     }
 }
 
