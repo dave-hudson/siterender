@@ -53,9 +53,9 @@ Requirements:
   - Implement a retry mechanism for failed render attempts with a default of 3 retries.
   - The retry mechanism should be applied to invocations of puppeteer as well as for network failures.
   - Allow this to be configurable with the --max-retries parameter.
-  - If a failure occurs, wait one second before attempting the retry.
+  - Use exponential backoff with jitter for retries, with the backoff time doubling after each attempt and a random jitter added.
+  - Ensure that the backoff time does not exceed 8 seconds.
   - The tool should exit with an error status if any page fails to render after retries.
-  - If a failure occurs, use a random backoff of up to 8 seconds before trying again.
 7. Successful completion:
   - If all pages render successfully, exit with a success status.
 8. Logging:
