@@ -8,10 +8,12 @@ Requirements:
 
 1. Environment Setup:
   - The tool must be compatible with Node.js version 14.x or later and headless Google Chrome (current version).
+  - The software should be written in TypeScript.
   - Use the latest available stable version of puppeteer for rendering.
   - Use the latest available stable version of yargs for command line options.
   - Use the latest available stable version of axios to handle the HTTP requests.
   - Use the latest available stable version of fast-xml-parser to handle the XML parsing.
+  - Any package dependencies that you might need must be explicitly stated in these requirements.  If you need to use a dependency that is not listed here then ask for approval or use a different approach.
 2. Tool Invocation:
   - The tool should be invoked as a script with Node.js using ES6 modules.
   - Ensure that the tool can be run from the command line with appropriate parameters.
@@ -53,6 +55,7 @@ Requirements:
   - Allow this to be configurable with the --max-retries parameter.
   - If a failure occurs, wait one second before attempting the retry.
   - The tool should exit with an error status if any page fails to render after retries.
+  - If a failure occurs, use a random backoff of up to 8 seconds before trying again.
 7. Successful completion:
   - If all pages render successfully, exit with a success status.
 8. Logging:
@@ -70,6 +73,5 @@ Requirements:
   - Use 4 spaces for indentation in the source code.
   - Where any functions may throw errors, include try/catch blocks to handle those error conditions.
   - For code style, do not use an "else" if the previous block in an if statement ends with a "return" statement.
-11. Dependencies:
-  - Any package dependencies that you might need must be explicitly stated in these requirements.  If you need to use a dependency that is not listed here then ask for approval or use a different approach.
-
+  - The code should be split into two files.  The first one, siterender.ts contains the code to start the application.  The second one, logic.ts should contain all of the logic of the application to make it easier to construct tests.
+  - If the user specifies a command line option that is not known then print an error to the console indicating the faulty option, print the help, and exit with an error status.
