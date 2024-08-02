@@ -5,10 +5,11 @@ import puppeteer from 'puppeteer';
 import {
     fetchSitemap,
     parseSitemap,
-    replaceUrl,
     getFilePath,
-    saveRenderedPage,
-    renderPage
+    renderPage,
+    ensureDirectoryExistence,
+    deletePreviousFile,
+    startRendering
 } from './logic';
 
 jest.mock('axios');
@@ -17,11 +18,11 @@ jest.mock('fs', () => ({
         readFile: jest.fn(),
         writeFile: jest.fn(),
         mkdir: jest.fn(),
-        rm: jest.fn()
-    }
+        unlink: jest.fn(),
+    },
+    existsSync: jest.fn(),
 }));
 
-// Manual mocking for puppeteer
 jest.mock('puppeteer', () => {
     return {
         launch: jest.fn(() => ({
@@ -29,21 +30,9 @@ jest.mock('puppeteer', () => {
                 goto: jest.fn(),
                 content: jest.fn(() => '<html></html>'),
                 close: jest.fn(),
-                isClosed: jest.fn(() => false)
             })),
             close: jest.fn()
         }))
-    };
-});
-
-jest.mock('./logic', () => {
-    const originalModule = jest.requireActual('./logic');
-    return {
-        ...originalModule,
-        processSitemapIndex: jest.fn(),
-        processSitemapUrls: jest.fn(),
-        launchBrowserWithRetries: jest.fn(),
-        closeBrowserWithRetries: jest.fn()
     };
 });
 
@@ -69,18 +58,18 @@ describe('fetchSitemap', () => {
 
         const result = await fetchSitemap('http://example.com/sitemap.xml');
         expect(result).toBe(mockData);
-        expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap.xml', { maxRedirects: 10 });
+        expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap.xml', { maxRedirects: 5 });
     });
 
     it('should handle fetch errors', async () => {
         (axios.get as jest.Mock).mockRejectedValue(new Error('Fetch error'));
 
-        await expect(fetchSitemap('http://example.com/sitemap.xml')).rejects.toThrow('process.exit: 1');
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch sitemap: Fetch error');
+        await expect(fetchSitemap('http://example.com/sitemap.xml')).rejects.toThrow('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: Fetch error');
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: Fetch error');
     });
 });
 
-describe('saveRenderedPage', () => {
+describe('ensureDirectoryExistence', () => {
     let consoleErrorSpy: jest.SpyInstance;
     let processExitSpy: jest.SpyInstance;
 
@@ -96,23 +85,64 @@ describe('saveRenderedPage', () => {
         processExitSpy.mockRestore();
     });
 
-    it('should save rendered page content to a file', async () => {
+    it('should ensure directory exists', async () => {
         const filePath = 'output/index.html';
-        const content = '<html></html>';
 
-        await saveRenderedPage(filePath, content);
+        await ensureDirectoryExistence(filePath);
 
         expect(fs.promises.mkdir).toHaveBeenCalledWith(path.dirname(filePath), { recursive: true });
-        expect(fs.promises.writeFile).toHaveBeenCalledWith(filePath, content);
     });
 
-    it('should handle errors when saving rendered page content', async () => {
+    it('should handle errors when ensuring directory exists', async () => {
         const filePath = 'output/index.html';
-        const content = '<html></html>';
-        (fs.promises.writeFile as jest.Mock).mockRejectedValue(new Error('Write error'));
+        (fs.promises.mkdir as jest.Mock).mockRejectedValue(new Error('Mkdir error'));
 
-        await expect(saveRenderedPage(filePath, content)).rejects.toThrow('process.exit: 1');
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to save rendered page: Write error');
+        await expect(ensureDirectoryExistence(filePath)).rejects.toThrow('process.exit: 1');
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to create directory output: Mkdir error');
+    });
+});
+
+describe('deletePreviousFile', () => {
+    let consoleErrorSpy: jest.SpyInstance;
+    let processExitSpy: jest.SpyInstance;
+
+    beforeEach(() => {
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        processExitSpy = jest.spyOn(process, 'exit').mockImplementation((code?: string | number | null | undefined): never => {
+            throw new Error(`process.exit: ${code}`);
+        });
+    });
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore();
+        processExitSpy.mockRestore();
+    });
+
+    it('should delete previous file if it exists', async () => {
+        const filePath = 'output/index.html';
+        (fs.existsSync as jest.Mock).mockReturnValue(true);
+
+        await deletePreviousFile(filePath);
+
+        expect(fs.promises.unlink).toHaveBeenCalledWith(filePath);
+    });
+
+    it('should not delete previous file if it does not exist', async () => {
+        const filePath = 'output/index.html';
+        (fs.existsSync as jest.Mock).mockReturnValue(false);
+
+        await deletePreviousFile(filePath);
+
+        expect(fs.promises.unlink).not.toHaveBeenCalled();
+    });
+
+    it('should handle errors when deleting previous file', async () => {
+        const filePath = 'output/index.html';
+        (fs.existsSync as jest.Mock).mockReturnValue(true);
+        (fs.promises.unlink as jest.Mock).mockRejectedValue(new Error('Unlink error'));
+
+        await expect(deletePreviousFile(filePath)).rejects.toThrow('process.exit: 1');
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to delete file output/index.html: Unlink error');
     });
 });
 
@@ -132,7 +162,6 @@ describe('renderPage', () => {
             goto: jest.fn().mockResolvedValue(undefined),
             content: jest.fn().mockResolvedValue('<html></html>'),
             close: jest.fn().mockResolvedValue(undefined),
-            isClosed: jest.fn().mockReturnValue(false),
         };
         mockBrowser = {
             newPage: jest.fn().mockResolvedValue(mockPage),
@@ -147,27 +176,27 @@ describe('renderPage', () => {
 
     it('should render a page', async () => {
         const browser = await puppeteer.launch();
-        const content = await renderPage(browser, 'http://example.com', 3);
-        expect(content).toBe('<html></html>');
-        expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', { waitUntil: 'networkidle2', timeout: 60000 });
+        const url = 'http://example.com';
+        const outputDir = 'output';
+        const filePath = getFilePath(new URL(url), outputDir);
+
+        await renderPage(browser, url, outputDir);
+
+        expect(mockPage.goto).toHaveBeenCalledWith(url, { waitUntil: 'networkidle2' });
+        expect(mockPage.content).toHaveBeenCalled();
+        expect(fs.promises.writeFile).toHaveBeenCalledWith(filePath, '<html></html>');
         expect(mockPage.close).toHaveBeenCalled();
     });
 
-    it('should retry rendering a page on failure', async () => {
-        mockPage.goto.mockRejectedValueOnce(new Error('Navigation error'));
+    it('should handle errors during rendering', async () => {
         const browser = await puppeteer.launch();
-        const content = await renderPage(browser, 'http://example.com', 3);
-        expect(content).toBe('<html></html>');
-        expect(mockPage.goto).toHaveBeenCalledTimes(2);
-    }, 30000);
-
-    it('should throw error after max retries', async () => {
+        const url = 'http://example.com';
         mockPage.goto.mockRejectedValue(new Error('Navigation error'));
-        const browser = await puppeteer.launch();
-        await expect(renderPage(browser, 'http://example.com', 3)).rejects.toThrow('Navigation error');
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to render http://example.com (attempt 1): Navigation error');
-        expect(mockPage.goto).toHaveBeenCalledTimes(4);
-    }, 30000);
+
+        await expect(renderPage(browser, url, 'output')).rejects.toThrow('process.exit: 1');
+        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to render page http://example.com: Navigation error');
+        expect(mockPage.close).toHaveBeenCalled();
+    });
 });
 
 describe('parseSitemap', () => {
@@ -175,42 +204,69 @@ describe('parseSitemap', () => {
         const xml = '<urlset><url><loc>http://example.com/</loc></url></urlset>';
         const result = parseSitemap(xml);
 
-        const expected = {
-            urlset: {
-                url: [{ loc: 'http://example.com/' }],
-            },
-        };
-
-        // Adjust expectation based on actual output structure
-        if (!Array.isArray(result.urlset.url)) {
-            result.urlset.url = [result.urlset.url];
-        }
-
-        expect(result).toEqual(expected);
-    });
-});
-
-describe('replaceUrl', () => {
-    it('should replace URL prefixes', () => {
-        const urls = ['http://old.com/page1', 'http://old.com/page2'];
-        const replacedUrls = replaceUrl(urls, 'http://new.com=http://old.com');
-        expect(replacedUrls).toEqual(['http://new.com/page1', 'http://new.com/page2']);
+        expect(result).toEqual(['http://example.com/']);
     });
 });
 
 describe('getFilePath', () => {
     it('should construct file path for URLs ending with /', () => {
-        const filePath = getFilePath('http://example.com/', 'output');
+        const parsedUrl = new URL('http://example.com/');
+        const filePath = getFilePath(parsedUrl, 'output');
         expect(filePath).toBe('output/index.html');
     });
 
-    it('should construct file path for URLs ending with .html', () => {
-        const filePath = getFilePath('http://example.com/page.html', 'output');
-        expect(filePath).toBe('output/page.html.html');
-    });
-
-    it('should construct file path for URLs without trailing / or .html', () => {
-        const filePath = getFilePath('http://example.com/page', 'output');
+    it('should construct file path for URLs without trailing /', () => {
+        const parsedUrl = new URL('http://example.com/page');
+        const filePath = getFilePath(parsedUrl, 'output');
         expect(filePath).toBe('output/page/index.html');
     });
 });
+
+describe('startRendering', () => {
+    let consoleErrorSpy: jest.SpyInstance;
+    let processExitSpy: jest.SpyInstance;
+    let mockBrowser: any;
+    let mockPage: any;
+
+    beforeEach(() => {
+        consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+        processExitSpy = jest.spyOn(process, 'exit').mockImplementation((code?: string | number | null | undefined): never => {
+            throw new Error(`process.exit: ${code}`);
+        });
+
+        mockPage = {
+            goto: jest.fn().mockResolvedValue(undefined),
+            content: jest.fn().mockResolvedValue('<html></html>'),
+            close: jest.fn().mockResolvedValue(undefined),
+        };
+        mockBrowser = {
+            newPage: jest.fn().mockResolvedValue(mockPage),
+            close: jest.fn().mockResolvedValue(undefined)
+        };
+        (puppeteer.launch as jest.Mock).mockResolvedValue(mockBrowser);
+
+        jest.clearAllMocks();
+    });
+
+    afterEach(() => {
+        consoleErrorSpy.mockRestore();
+        processExitSpy.mockRestore();
+    });
+
+    it('should start rendering process', async () => {
+        const mockData = '<urlset><url><loc>http://example.com/</loc></url></urlset>';
+        (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+
+        await startRendering({
+            sitemapUrl: 'http://example.com/sitemap.xml',
+            output: 'output',
+            parallelRenders: 1,
+            maxRetries: 3
+        });
+
+        expect(puppeteer.launch).toHaveBeenCalled();
+        expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', { waitUntil: 'networkidle2' });
+        expect(fs.promises.writeFile).toHaveBeenCalledWith('output/index.html', '<html></html>');
+    });
+});
+
