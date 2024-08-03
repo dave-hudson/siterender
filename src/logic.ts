@@ -2,8 +2,8 @@ import puppeteer from 'puppeteer';
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';
-import { XMLParser } from 'fast-xml-parser';
-import type { Browser } from 'puppeteer';
+import {XMLParser} from 'fast-xml-parser';
+import type {Browser} from 'puppeteer';
 
 export interface Args {
     sitemapFile?: string;
@@ -60,8 +60,10 @@ async function getUrls(argv: Args): Promise<string[]> {
             const subSitemapContent = await fetchSitemap(map.loc);
             urls = urls.concat(parseSitemap(subSitemapContent));
         }
+
         return urls;
     }
+
     return parseSitemap(sitemapContent);
 }
 
@@ -77,6 +79,7 @@ export function parseSitemap(content: string): string[] {
             ? sitemap.urlset.url.map((u: any) => u.loc)
             : [sitemap.urlset.url.loc];
     }
+
     return [];
 }
 
@@ -87,7 +90,7 @@ export function parseSitemap(content: string): string[] {
  */
 export async function fetchSitemap(url: string): Promise<string> {
     try {
-        const response = await axios.get(url, { maxRedirects: 5 });
+        const response = await axios.get(url, {maxRedirects: 5});
         return response.data;
     } catch (error) {
         const errorMessage = `Failed to fetch sitemap from ${url}: ${error instanceof Error ? `Error: ${error.message}` : `Error: ${String(error)}`}`;
@@ -103,7 +106,7 @@ export async function fetchSitemap(url: string): Promise<string> {
  */
 function parseUrlReplacement(replaceUrl: string): UrlReplacement {
     const [newPrefix, oldPrefix] = replaceUrl.split('=');
-    return { newPrefix, oldPrefix };
+    return {newPrefix, oldPrefix};
 }
 
 /**
@@ -203,7 +206,7 @@ export async function renderPage(browser: Browser, url: string, outputDir: strin
         await ensureDirectoryExistence(filePath);
         await deletePreviousFile(filePath);
         
-        await page.goto(url, { waitUntil: 'networkidle2' });
+        await page.goto(url, {waitUntil: 'networkidle2'});
 
         const content = await page.content();
 
@@ -229,6 +232,7 @@ export function getFilePath(parsedUrl: URL, outputDir: string): string {
     } else if (!path.extname(pathName)) {
         pathName = `${pathName}/index.html`;
     }
+
     return path.join(outputDir, pathName);
 }
 
@@ -240,7 +244,7 @@ export async function ensureDirectoryExistence(filePath: string): Promise<void> 
     const dir = path.dirname(filePath);
     if (!fs.existsSync(dir)) {
         try {
-            await fs.promises.mkdir(dir, { recursive: true });
+            await fs.promises.mkdir(dir, {recursive: true});
         } catch (error) {
             console.error(`Failed to create directory ${dir}: ${error instanceof Error ? error.message : String(error)}`);
             process.exit(1);

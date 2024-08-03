@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 import yargs from 'yargs';
-import { hideBin } from 'yargs/helpers';
-import { startRendering, Args } from './logic';
+import {hideBin} from 'yargs/helpers';
+import {startRendering, Args} from './logic';
 import os from 'os';
 
 const argv = yargs(hideBin(process.argv))

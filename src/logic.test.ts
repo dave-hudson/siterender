@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import axios from 'axios';
-import puppeteer, { Browser } from 'puppeteer';
+import puppeteer, {Browser} from 'puppeteer';
 import {
     fetchSitemap,
     parseSitemap,
@@ -71,11 +71,11 @@ describe('logic.ts', () => {
     describe('fetchSitemap', () => {
         it('should fetch sitemap content from URL', async () => {
             const mockData = '<urlset><url><loc>http://example.com/</loc></url></urlset>';
-            (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+            (axios.get as jest.Mock).mockResolvedValue({data: mockData});
 
             const result = await fetchSitemap('http://example.com/sitemap.xml');
             expect(result).toBe(mockData);
-            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap.xml', { maxRedirects: 5 });
+            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap.xml', {maxRedirects: 5});
         });
 
         it('should handle fetch errors', async () => {
@@ -115,7 +115,7 @@ describe('logic.ts', () => {
 
             await ensureDirectoryExistence(filePath);
 
-            expect(fs.promises.mkdir).toHaveBeenCalledWith(path.dirname(filePath), { recursive: true });
+            expect(fs.promises.mkdir).toHaveBeenCalledWith(path.dirname(filePath), {recursive: true});
         });
 
         it('should handle errors when ensuring directory exists', async () => {
@@ -168,7 +168,7 @@ describe('logic.ts', () => {
 
             await renderPage(mockBrowser, url, outputDir);
 
-            expect(mockPage.goto).toHaveBeenCalledWith(url, { waitUntil: 'networkidle2' });
+            expect(mockPage.goto).toHaveBeenCalledWith(url, {waitUntil: 'networkidle2'});
             expect(mockPage.content).toHaveBeenCalled();
             expect(fs.promises.writeFile).toHaveBeenCalledWith(filePath, '<html></html>');
             expect(mockPage.close).toHaveBeenCalled();
@@ -192,7 +192,7 @@ describe('logic.ts', () => {
 
         beforeEach(() => {
             mockData = '<urlset><url><loc>http://example.com</loc></url></urlset>';
-            (axios.get as jest.Mock).mockResolvedValue({ data: mockData });
+            (axios.get as jest.Mock).mockResolvedValue({data: mockData});
             (fs.promises.mkdir as jest.Mock).mockResolvedValue(undefined);
             (fs.promises.writeFile as jest.Mock).mockResolvedValue(undefined);
             (fs.promises.unlink as jest.Mock).mockResolvedValue(undefined);
@@ -208,7 +208,7 @@ describe('logic.ts', () => {
             } as Args);
 
             expect(puppeteer.launch).toHaveBeenCalled();
-            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', { waitUntil: 'networkidle2' });
+            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', {waitUntil: 'networkidle2'});
             expect(fs.promises.writeFile).toHaveBeenCalledWith('output/index.html', '<html></html>');
         });
 
@@ -223,7 +223,7 @@ describe('logic.ts', () => {
             } as Args);
 
             expect(puppeteer.launch).toHaveBeenCalled();
-            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', { waitUntil: 'networkidle2' });
+            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', {waitUntil: 'networkidle2'});
             expect(fs.promises.writeFile).toHaveBeenCalledWith('output/index.html', '<html></html>');
         });
 
@@ -231,7 +231,7 @@ describe('logic.ts', () => {
             const sitemapIndexData = '<sitemapindex><sitemap><loc>http://example.com/sitemap1.xml</loc></sitemap></sitemapindex>';
             const subSitemapData = '<urlset><url><loc>http://example.com/page1</loc></url></urlset>';
 
-            (axios.get as jest.Mock).mockResolvedValueOnce({ data: sitemapIndexData }).mockResolvedValueOnce({ data: subSitemapData });
+            (axios.get as jest.Mock).mockResolvedValueOnce({data: sitemapIndexData}).mockResolvedValueOnce({data: subSitemapData});
 
             await startRendering({
                 sitemapUrl: 'http://example.com/sitemapindex.xml',
@@ -240,9 +240,9 @@ describe('logic.ts', () => {
                 maxRetries: 3
             } as Args);
 
-            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemapindex.xml', { maxRedirects: 5 });
-            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap1.xml', { maxRedirects: 5 });
-            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com/page1', { waitUntil: 'networkidle2' });
+            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemapindex.xml', {maxRedirects: 5});
+            expect(axios.get).toHaveBeenCalledWith('http://example.com/sitemap1.xml', {maxRedirects: 5});
+            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com/page1', {waitUntil: 'networkidle2'});
             expect(fs.promises.writeFile).toHaveBeenCalledWith('output/page1/index.html', '<html></html>');
         });
 
@@ -255,7 +255,7 @@ describe('logic.ts', () => {
                 replaceUrl: 'http://new.com=http://example.com'
             } as Args);
 
-            expect(mockPage.goto).toHaveBeenCalledWith('http://new.com', { waitUntil: 'networkidle2' });
+            expect(mockPage.goto).toHaveBeenCalledWith('http://new.com', {waitUntil: 'networkidle2'});
         });
 
         it('should retry rendering on failure', async () => {
