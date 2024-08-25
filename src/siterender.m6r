@@ -130,13 +130,6 @@ Goal:
         Require: There should be no other console messages.
 
     Story:
-        Robust implementation.
-
-        As: a website developer,
-        I: want the implementation to be robust and not attempt to generate ouputs that might be incorrect,
-        So: I want the code to check for potential runtime problems.
-
-    Story:
         Tool invocation.
 
         As: a website developer,
@@ -157,7 +150,7 @@ Goal:
             If the sitemap is being defined by a URL then the "--sitemap-url" argument will define the URL where to
             find the sitemap file.
 
-        Require: The output directory is defined by the non-optional --output argument.
+        Require: The output directory is defined by the non-optional "--output" argument.
 
         Require: The number of parallel tasks can be configured using the optional "--parallel-renders" argument.
 
@@ -180,11 +173,13 @@ Goal:
         Require: If the tool is invoked with invalid parameters, display correct usage information.
 
     Story:
-        Environment and dependencies.
+        Implementation and dependencies.
 
         As: a website developer,
         I: want the implementation to be easy to maintain,
-        So: I want to use a well-defined set of dependencies.
+        So: I want to use a well-defined set of coding standards and dependencies.
+
+        Require: The tool should be build using TypeScript.
 
         Require: The tool must be compatible with Node.js version 14.x or later and headless Google Chrome (current version).
 
@@ -200,9 +195,6 @@ Goal:
             Any package dependencies that you might need must be explicitly stated in these requirements.  If you need to
             use a dependency that is not listed here then ask for approval or use a different approach.
 
-    Story:
-        Code quality
-
         Require: Use JSDoc annotations for all functions.
 
         Require: Use 4 spaces for indentation in the source code.
@@ -210,3 +202,35 @@ Goal:
         Require: Where any functions may throw errors, include try/catch blocks to handle those error conditions.
 
         Require: For code style, do not use an "else" if the previous block in an if statement ends with a "return" statement.
+
+        Require:
+            The core logic of the tool should go in a file, "logic.ts", while the command line processing capabilities
+            should go in a file "siterender.ts".
+
+    Story:
+        Quality.
+
+        As: a software maintainer for the tool,
+        I: would like there to be comprehensive test coverage for the tool,
+        So: any modifications can be checked to ensure they work correctly.
+
+        Require:
+            The logic of the tool in "logic.ts" must be able to be tested using the Jest framework.
+
+        Require:
+            The tests should cover as many lines of code and as many branches as possible.
+
+    Story:
+        Previous version.
+
+        Require:
+            An implementation of the tool is provided here.  It may not accurately reflect the
+            requirements stated previously, in which case it will need to be modified to support them.
+
+            Code: src/siterender.ts
+            Code: src/logic.ts
+
+        Require:
+            An implementation of the tests for src/logic.ts is provided here:
+
+            Code: src/logic.test.ts
