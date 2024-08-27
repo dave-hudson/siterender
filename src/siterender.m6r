@@ -98,36 +98,6 @@ Product: Site rendering application
         Trait:
             If any of the pages fail to render successfully, and all retries have failed, then exit with a failure status.
 
-    Trait: Logging
-        Trait:
-            Emit console messages for progress and errors.
-
-        Trait:
-            The tool does not need to log to a file.
-
-        Trait:
-            When the tool encounters a sitemap index it should emit a console message: "Processing sitemap index: <name>", where
-            <name> is the name of the sitemap index file.
-
-        Trait:
-            For each sitemap, including all those found in a sitemap index, emit a console message:
-            "Processing sitemap: <name>", where <name> is the name of the sitemap file.
-
-        Trait:
-            If a URL is successfully rendered, emit a console message “Rendered: <url>”, where <url> is the URL has been
-            rendered.
-
-        Trait:
-            If a URL fails to render successfully, emit a console message “Failed: <url>: <reason>”, where <url> is the
-            URL being processed, and <reason> is the failure reason.
-
-        Trait:
-            If an error occurs, even if it's handled, log a message indicating the URL that had the error along with a
-            message indicating why the error occurred.
-
-        Trait:
-            There should be no other console messages.
-
     Trait: Tool invocation
         As a website developer, I would like to start my pre-render tool from the command line, so I can easily
         configure the behaviour I want.
@@ -175,14 +145,44 @@ Product: Site rendering application
         Trait:
             If the tool is invoked with invalid parameters, display correct usage information.
 
+    Trait: Logging
+        Trait:
+            Emit console messages for progress and errors.
+
+        Trait:
+            The tool does not need to log to a file.
+
+        Trait:
+            When the tool encounters a sitemap index it should emit a console message: "Processing sitemap index: <name>", where
+            <name> is the name of the sitemap index file.
+
+        Trait:
+            For each sitemap, including all those found in a sitemap index, emit a console message:
+            "Processing sitemap: <name>", where <name> is the name of the sitemap file.
+
+        Trait:
+            If a URL is successfully rendered, emit a console message “Rendered: <url>”, where <url> is the URL has been
+            rendered.
+
+        Trait:
+            If a URL fails to render successfully, emit a console message “Failed: <url>: <reason>”, where <url> is the
+            URL being processed, and <reason> is the failure reason.
+
+        Trait:
+            If an error occurs, even if it's handled, log a message indicating the URL that had the error along with a
+            message indicating why the error occurred.
+
+        Trait:
+            There should be no other console messages.
+
     Trait: Implementation and dependencies
         As a website developer, I want the implementation to be easy to maintain, so I want to use a well-defined
         set of coding standards and dependencies.
 
-        Trait:
+        Trait: Implement in TypeScript
             The tool should be build using TypeScript.
 
-        Trait:
+        Trait: Node.js application
             The tool must be compatible with Node.js version 14.x or later and headless Google Chrome (current version).
 
         Trait:
