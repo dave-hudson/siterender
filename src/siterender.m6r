@@ -135,39 +135,37 @@ Product: Site rendering application
             If the user specifies a "-h" or "--help" argument then display a help message with all valid arguments,
             any parameters they may have, and their usage.
 
-        Scope:
+        Scope: Check all arguments
+            If the tool is invoked with unknown arguments, display correct usage information.
+
+        Scope: Check all argument parameters
             The tool must check that the form of all parameters correctly matches what is expected for each
             command line argument.
 
-        Scope:
             If the tool is invoked with invalid parameters, display correct usage information.
 
     Scope: Logging
-        Scope:
+        Scope: Progress reporting
             Emit console messages for progress and errors.
 
-        Scope:
+        Scope: No file logging
             The tool does not need to log to a file.
 
-        Scope:
+        Scope: Sitemap index logging
             When the tool encounters a sitemap index it should emit a console message: "Processing sitemap index: <name>", where
             <name> is the name of the sitemap index file.
 
-        Scope:
+        Scope: Sitemap file logging
             For each sitemap, including all those found in a sitemap index, emit a console message:
             "Processing sitemap: <name>", where <name> is the name of the sitemap file.
 
-        Scope:
+        Scope: Success messages
             If a URL is successfully rendered, emit a console message “Rendered: <url>”, where <url> is the URL has been
             rendered.
 
-        Scope:
+        Scope: Failure messages
             If a URL fails to render successfully, emit a console message “Failed: <url>: <reason>”, where <url> is the
             URL being processed, and <reason> is the failure reason.
-
-        Scope:
-            If an error occurs, even if it's handled, log a message indicating the URL that had the error along with a
-            message indicating why the error occurred.
 
         Scope:
             There should be no other console messages.
@@ -182,35 +180,34 @@ Product: Site rendering application
         Scope: Node.js application
             The tool should be built as a script for Node.js 14.x or later and must use ES6 modules.
 
-        Scope:
+        Scope: Use puppeteer
             Use the latest available stable version of puppeteer for rendering via headless Google Chrome.
 
-        Scope:
+        Scope: Use yargs
             Use the latest available stable version of yargs for command line options.
 
-        Scope:
+        Scope: Use axios
             Use the latest available stable version of axios to handle the HTTP requests.
 
-        Scope:
+        Scope: Use fast-xml-parser
             Use the latest available stable version of fast-xml-parser to handle the XML parsing.
 
-        Scope:
-            Any package dependencies that you might need must be explicitly stated in these requirements.  If you need to
-            use a dependency that is not listed here then ask for approval or use a different approach.
+        Scope: No other dependencies
+            Do not use any package dependencies that are not explicitly stated in these requirements.
 
-        Scope:
+        Scope: JSDoc annotations
             Use JSDoc annotations for all functions.
 
-        Scope:
+        Scope: Source code indentation
             Use 4 spaces for indentation in the source code.
 
-        Scope:
+        Scope: Exception handling
             Where any functions may throw errors, include try/catch blocks to handle those error conditions.
 
-        Scope:
+        Scope: Do not use unnecessary else statements
             For code style, do not use an "else" if the previous block in an if statement ends with a "return" statement.
 
-        Scope:
+        Scope: File partitioning
             The core logic of the tool should go in a file, "logic.ts", while the command line processing capabilities
             should go in a file "siterender.ts".
 
@@ -218,10 +215,11 @@ Product: Site rendering application
         As a software maintainer for the tool, I would like there to be comprehensive test coverage for the tool,
         so any modifications can be checked to ensure they work correctly.
 
-        Scope:
-            The logic of the tool in "logic.ts" must be able to be tested using the Jest framework.
+        Scope: Unit test files
+            The logic of the tool in "logic.ts" must be able to be tested using the Jest framework.  The tests should
+            go in "logic.test.ts".
 
-        Scope:
+        Scope: Test coverage
             The tests should cover as many lines of code and as many branches as possible.
 
     Scope: Previous version
