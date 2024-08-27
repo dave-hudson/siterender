@@ -84,6 +84,13 @@ describe('logic.ts', () => {
             await expect(fetchSitemap('http://example.com/sitemap.xml')).rejects.toThrow('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: Fetch error');
             expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: Fetch error');
         });
+
+        it('should handle timeout errors when fetching sitemap', async () => {
+            (axios.get as jest.Mock).mockRejectedValue(new Error('ETIMEDOUT'));
+
+            await expect(fetchSitemap('http://example.com/sitemap.xml')).rejects.toThrow('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: ETIMEDOUT');
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch sitemap from http://example.com/sitemap.xml: Error: ETIMEDOUT');
+        });
     });
 
     describe('parseSitemap', () => {
@@ -124,6 +131,14 @@ describe('logic.ts', () => {
 
             await expect(ensureDirectoryExistence(filePath)).rejects.toThrow('process.exit: 1');
             expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to create directory output: Mkdir error');
+        });
+
+        it('should handle write permission errors when creating directories', async () => {
+            const filePath = 'output/index.html';
+            (fs.promises.mkdir as jest.Mock).mockRejectedValue(new Error('EACCES: permission denied'));
+
+            await expect(ensureDirectoryExistence(filePath)).rejects.toThrow('process.exit: 1');
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to create directory output: EACCES: permission denied');
         });
     });
 
@@ -184,6 +199,20 @@ describe('logic.ts', () => {
             await expect(renderPage(mockBrowser, url, 'output')).rejects.toThrow('Navigation error');
             expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to render page http://example.com: Navigation error');
             expect(mockPage.close).toHaveBeenCalled();
+        });
+
+        it('should handle write permission errors when writing files', async () => {
+            const url = 'http://example.com';
+
+            // Allow navigation to succeed
+            mockPage.goto.mockResolvedValue(undefined);
+
+            (fs.promises.mkdir as jest.Mock).mockResolvedValue(undefined);
+            (fs.promises.writeFile as jest.Mock).mockRejectedValue(new Error('EACCES: permission denied'));
+            (fs.promises.unlink as jest.Mock).mockResolvedValue(undefined);
+
+            await expect(renderPage(mockBrowser, url, 'output')).rejects.toThrow('EACCES: permission denied');
+            expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to render page http://example.com: EACCES: permission denied');
         });
     });
 
@@ -258,6 +287,18 @@ describe('logic.ts', () => {
             expect(mockPage.goto).toHaveBeenCalledWith('http://new.com', {waitUntil: 'networkidle2'});
         });
 
+        it('should not replace URLs if they do not match the old prefix', async () => {
+            await startRendering({
+                sitemapUrl: 'http://example.com/sitemap.xml',
+                output: 'output',
+                parallelRenders: 1,
+                maxRetries: 3,
+                replaceUrl: 'http://new.com=http://example.org'
+            } as Args);
+
+            expect(mockPage.goto).toHaveBeenCalledWith('http://example.com', {waitUntil: 'networkidle2'});
+        });
+
         it('should retry rendering on failure', async () => {
             mockPage.goto.mockRejectedValueOnce(new Error('Navigation error')).mockResolvedValue(undefined);
 
@@ -269,6 +310,7 @@ describe('logic.ts', () => {
             } as Args);
 
             expect(mockPage.goto).toHaveBeenCalledTimes(2);
+            expect(consoleLogSpy).toHaveBeenCalledWith('Retrying (1/3) for http://example.com');
         });
 
         it('should fail after maximum retries', async () => {
@@ -284,6 +326,23 @@ describe('logic.ts', () => {
             expect(mockPage.goto).toHaveBeenCalledTimes(2);
             expect(consoleErrorSpy).toHaveBeenCalledWith('Failed: http://example.com: Navigation error');
         });
+
+        it('should handle multiple renders in parallel', async () => {
+            const mockData = '<urlset><url><loc>http://example.com/page1</loc></url><url><loc>http://example.com/page2</loc></url><url><loc>http://example.com/page3</loc></url></urlset>';
+
+            (axios.get as jest.Mock).mockResolvedValue({data: mockData});
+            await startRendering({
+                sitemapUrl: 'http://example.com/sitemap.xml',
+                output: 'output',
+                parallelRenders: 2, // Set to 2 to test parallel execution
+                maxRetries: 1
+            } as Args);
+
+            expect(mockPage.goto).toHaveBeenCalledTimes(3);
+            expect(fs.promises.writeFile).toHaveBeenCalledTimes(3);
+            expect(mockPage.goto).toHaveBeenNthCalledWith(1, 'http://example.com/page1', {waitUntil: 'networkidle2'});
+            expect(mockPage.goto).toHaveBeenNthCalledWith(2, 'http://example.com/page2', {waitUntil: 'networkidle2'});
+            expect(mockPage.goto).toHaveBeenNthCalledWith(3, 'http://example.com/page3', {waitUntil: 'networkidle2'});
+        });
     });
 });
-
