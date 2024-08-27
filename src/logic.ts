@@ -46,9 +46,9 @@ async function getUrls(argv: Args): Promise<string[]> {
     const sitemapContent = argv.sitemapFile
         ? await fs.promises.readFile(argv.sitemapFile, 'utf8')
         : await fetchSitemap(argv.sitemapUrl!);
-    
+
     const sitemap = parser.parse(sitemapContent);
-    
+
     if (sitemap.sitemapindex) {
         console.log('Processing sitemap index');
         const sitemaps = Array.isArray(sitemap.sitemapindex.sitemap)
@@ -153,7 +153,9 @@ async function processQueue(
 ): Promise<void> {
     while (queue.length > 0) {
         const url = queue.shift()!;
-        const finalUrl = urlReplacement ? url.replace(urlReplacement.oldPrefix, urlReplacement.newPrefix) : url;
+        const finalUrl = urlReplacement && url.startsWith(urlReplacement.oldPrefix)
+            ? url.replace(urlReplacement.oldPrefix, urlReplacement.newPrefix)
+            : url;
 
         await retryRenderPage(browser, finalUrl, outputDir, maxRetries);
     }
@@ -205,7 +207,7 @@ export async function renderPage(browser: Browser, url: string, outputDir: strin
 
         await ensureDirectoryExistence(filePath);
         await deletePreviousFile(filePath);
-        
+
         await page.goto(url, {waitUntil: 'networkidle2'});
 
         const content = await page.content();
