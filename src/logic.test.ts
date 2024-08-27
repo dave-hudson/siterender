@@ -100,6 +100,27 @@ describe('logic.ts', () => {
 
             expect(result).toEqual(['http://example.com/']);
         });
+
+        it('should return an empty array if sitemap content does not contain urlset', () => {
+            const xml = '<sitemapindex><sitemap><loc>http://example.com/sitemap1.xml</loc></sitemap></sitemapindex>';
+            const result = parseSitemap(xml);
+
+            expect(result).toEqual([]);
+        });
+
+        it('should return an empty array if the sitemap content is empty', () => {
+            const xml = '';
+            const result = parseSitemap(xml);
+
+            expect(result).toEqual([]);
+        });
+
+        it('should return an empty array if the sitemap content is malformed or unexpected', () => {
+            const xml = '<unexpected><data>Some content</data></unexpected>';
+            const result = parseSitemap(xml);
+
+            expect(result).toEqual([]);
+        });
     });
 
     describe('getFilePath', () => {
