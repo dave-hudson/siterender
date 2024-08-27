@@ -57,84 +57,81 @@ Product: Site rendering application
         Scope: Handling of filesystem failures
             If any file or directory operations fail, then log a message to the console and exit with an error status.
 
-        Scope:
+        Scope: Start next render when one finishes
             As soon as a render completes then the next available render should be started.
 
-        Scope:
+        Scope: Handle network errors
             The tool should handle network errors, timeouts, and rendering errors.
 
-        Scope:
+        Scope: Graceful failure from errors
             In the event of any errors, ensure that all puppeteer resources are released correctly.
 
     Scope: Performance
-        Scope:
+        Scope: Render pages in parallel
             The tool should parallelize rendering operations.
 
-        Scope:
+        Scope: Default number of parallel renders
             The default number of parallel tasks should default to the number of available CPU cores.
 
-        Scope:
+        Scope: Use just one instance of puppeteer
             For performance reasons, only start puppeteer once.
 
 
     Scope: Retry mechanism
-        Scope:
+        Scope: Retry rendering failures
             In the event of a failure to render a URL, use a retry mechanism with a default of 3 retries.
 
-        Scope:
+        Scope: Failures in scope
             The retry mechanism should be applied to invocations of puppeteer as well as for network failures.
 
-        Scope:
+        Scope: Backoff mechanism
             If a failure occurs, wait 1 second before attempting the retry, then apply exponential backoff up to a maximum
             of 8 seconds.
 
-        Scope:
+        Scope: Exit if retries fail
             The tool should exit with an error status if any page fails to render after retries.
 
     Scope: Exit status
-        Scope:
+        Scope: Success status
             If all pages render successfully, exit with a success status.
 
-        Scope:
+        Scope: Failure status
             If any of the pages fail to render successfully, and all retries have failed, then exit with a failure status.
 
     Scope: Tool invocation
         As a website developer, I would like to start my pre-render tool from the command line, so I can easily
         configure the behaviour I want.
 
-        Scope:
+        Scope: Command line tool
             The tool will be run from the command line with appropriate arguments.
 
-        Scope:
-            The tool should be invoked as a script with Node.js using ES6 modules.
-
-        Scope:
+        Scope: No config file
             The tool does not need a configuration file.
 
-        Scope:
+        Scope: "--sitemap-file" argument
             If the sitemap is being defined by a file then the "--sitemap-file" argument will define where to find
             the sitemap file.
 
-        Scope:
+        Scope: "--sitemap-url" argument
             If the sitemap is being defined by a URL then the "--sitemap-url" argument will define the URL where to
             find the sitemap file.
 
-        Scope:
+        Scope: "--output" argument
             The output directory is defined by the non-optional "--output" argument.
 
-        Scope:
+        Scope: "--parallel-renders" argument
             The number of parallel tasks can be configured using the optional "--parallel-renders" argument.
 
-        Scope:
+        Scope: "--max-retries" argument
             The number of retries can be configured using the optional "--max-retries" argument.
 
-        Scope:
+        Scope: "--replace-url" argument
             If the user wishes to replace the start of a URL read in a sitemap file will a new prefix, this will be
             done using the "--replace-url" argument.  The "--replace-url" parameter should take the form
             "<new-url-prefix>=<old-url-prefix>".  Note that the URL prefix may include a port number as well as a
             domain name and protocol.
 
-        Scope:
+        Scope: "--help" argument
             If the user specifies a "-h" or "--help" argument then display a help message with all valid arguments,
             any parameters they may have, and their usage.
 
@@ -183,10 +180,10 @@ Product: Site rendering application
             The tool should be build using TypeScript.
 
         Scope: Node.js application
-            The tool must be compatible with Node.js version 14.x or later and headless Google Chrome (current version).
+            The tool should be built as a script for Node.js 14.x or later and must use ES6 modules.
 
         Scope:
-            Use the latest available stable version of puppeteer for rendering.
+            Use the latest available stable version of puppeteer for rendering via headless Google Chrome.
 
         Scope:
             Use the latest available stable version of yargs for command line options.
