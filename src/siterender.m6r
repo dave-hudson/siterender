@@ -8,32 +8,32 @@ Product: Site rendering application
     I require an tool that can scan a sitemap.xml file, determine all of the web pages available in the website
     described by that file and pre-render them all to an output directory.
 
-    Trait: Sitemap handling
-        Trait: Sitemap can be a file or URL
+    Scope: Sitemap handling
+        Scope: Sitemap can be a file or URL
             The sitemap will be defined by either a file or a URL.  Either option can be provided but not both, and one
             option must be provided by the user.
 
-        Trait: Sitemap index files
+        Scope: Sitemap index files
             The logic should handle either a sitemap or a sitemap index.  If it encounters a sitemap index then it must
             process all the individual sitemaps within the sitemap index.
 
-        Trait: HTTP redirects
+        Scope: HTTP redirects
             If the response from the web server to fetching the sitemap via a URL is redirect status code then log the
             new URL and load from that URL instead.
 
-        Trait: Support replacing URL elements
+        Scope: Support replacing URL elements
             As a sitemap and files may be being served from a development server the tool must support replacing the protocol
             and hostname in the sitemap URLs with an alternative.  This will be implemented via the --replace-url argument.
 
-    Trait: Rendering
-        Trait: Output
+    Scope: Rendering
+        Scope: Output
             Rendered pages must be saved in a specified output directory.
 
-        Trait: Output structure
+        Scope: Output structure
             For each page, the directory structure should match the URL path, but should not include the hostname or
             any port number.
 
-        Trait: Handling of URL paths
+        Scope: Handling of URL paths
             If the page does not have an explicit ".html" or ".htm" name then assume it is a directory and create a file
             "index.html" as the file name within that output directory.
 
@@ -43,199 +43,200 @@ Product: Site rendering application
                 "<output-directory>/blog/post/index.html" where <output-directory> is the path specified as the output
                 directory.
 
-        Trait: Output directory operations
+        Scope: Output directory operations
             If the output directory or any subdirectories do not exist then they should be created.  If creating the
             directories fails then emit a failure message to the console and exit with an error status.
 
-        Trait: Do not render until previous output has been deleted
+        Scope: Do not render until previous output has been deleted
             Once the directory structure is in place and all old index.html files have been deleted, render all the pages.
             Do not attempt to start rendering until the old files are deleted and the new output directories have been created.
 
-        Trait: Preserve other previous files and directories
+        Scope: Preserve other previous files and directories
             The tool must not delete any file or directory that will not be written as an output file.
 
-        Trait: Handling of filesystem failures
+        Scope: Handling of filesystem failures
             If any file or directory operations fail, then log a message to the console and exit with an error status.
 
-        Trait:
+        Scope:
             As soon as a render completes then the next available render should be started.
 
-        Trait:
+        Scope:
             The tool should handle network errors, timeouts, and rendering errors.
 
-        Trait:
+        Scope:
             In the event of any errors, ensure that all puppeteer resources are released correctly.
 
-    Trait: Performance
-        Trait:
+    Scope: Performance
+        Scope:
             The tool should parallelize rendering operations.
 
-        Trait:
+        Scope:
             The default number of parallel tasks should default to the number of available CPU cores.
 
-        Trait:
+        Scope:
             For performance reasons, only start puppeteer once.
 
 
-    Trait: Retry mechanism
-        Trait:
+    Scope: Retry mechanism
+        Scope:
             In the event of a failure to render a URL, use a retry mechanism with a default of 3 retries.
 
-        Trait:
+        Scope:
             The retry mechanism should be applied to invocations of puppeteer as well as for network failures.
 
-        Trait:
+        Scope:
             If a failure occurs, wait 1 second before attempting the retry, then apply exponential backoff up to a maximum
             of 8 seconds.
 
-        Trait:
+        Scope:
             The tool should exit with an error status if any page fails to render after retries.
 
-    Trait: Exit status
-        Trait:
+    Scope: Exit status
+        Scope:
             If all pages render successfully, exit with a success status.
 
-        Trait:
+        Scope:
             If any of the pages fail to render successfully, and all retries have failed, then exit with a failure status.
 
-    Trait: Tool invocation
+    Scope: Tool invocation
         As a website developer, I would like to start my pre-render tool from the command line, so I can easily
         configure the behaviour I want.
 
-        Trait:
+        Scope:
             The tool will be run from the command line with appropriate arguments.
 
-        Trait:
+        Scope:
             The tool should be invoked as a script with Node.js using ES6 modules.
 
-        Trait:
+        Scope:
             The tool does not need a configuration file.
 
-        Trait:
+        Scope:
             If the sitemap is being defined by a file then the "--sitemap-file" argument will define where to find
             the sitemap file.
 
-        Trait:
+        Scope:
             If the sitemap is being defined by a URL then the "--sitemap-url" argument will define the URL where to
             find the sitemap file.
 
-        Trait:
+        Scope:
             The output directory is defined by the non-optional "--output" argument.
 
-        Trait:
+        Scope:
             The number of parallel tasks can be configured using the optional "--parallel-renders" argument.
 
-        Trait:
+        Scope:
             The number of retries can be configured using the optional "--max-retries" argument.
 
-        Trait:
+        Scope:
             If the user wishes to replace the start of a URL read in a sitemap file will a new prefix, this will be
             done using the "--replace-url" argument.  The "--replace-url" parameter should take the form
             "<new-url-prefix>=<old-url-prefix>".  Note that the URL prefix may include a port number as well as a
             domain name and protocol.
 
-        Trait:
+        Scope:
             If the user specifies a "-h" or "--help" argument then display a help message with all valid arguments,
             any parameters they may have, and their usage.
 
-        Trait:
+        Scope:
             The tool must check that the form of all parameters correctly matches what is expected for each
             command line argument.
 
-        Trait:
+        Scope:
             If the tool is invoked with invalid parameters, display correct usage information.
 
-    Trait: Logging
-        Trait:
+    Scope: Logging
+        Scope:
             Emit console messages for progress and errors.
 
-        Trait:
+        Scope:
             The tool does not need to log to a file.
 
-        Trait:
+        Scope:
             When the tool encounters a sitemap index it should emit a console message: "Processing sitemap index: <name>", where
             <name> is the name of the sitemap index file.
 
-        Trait:
+        Scope:
             For each sitemap, including all those found in a sitemap index, emit a console message:
             "Processing sitemap: <name>", where <name> is the name of the sitemap file.
 
-        Trait:
+        Scope:
             If a URL is successfully rendered, emit a console message “Rendered: <url>”, where <url> is the URL has been
             rendered.
 
-        Trait:
+        Scope:
             If a URL fails to render successfully, emit a console message “Failed: <url>: <reason>”, where <url> is the
             URL being processed, and <reason> is the failure reason.
 
-        Trait:
+        Scope:
             If an error occurs, even if it's handled, log a message indicating the URL that had the error along with a
             message indicating why the error occurred.
 
-        Trait:
+        Scope:
             There should be no other console messages.
 
-    Trait: Implementation and dependencies
+    Scope: Implementation and dependencies
         As a website developer, I want the implementation to be easy to maintain, so I want to use a well-defined
         set of coding standards and dependencies.
 
-        Trait: Implement in TypeScript
+        Scope: Implement in TypeScript
             The tool should be build using TypeScript.
 
-        Trait: Node.js application
+        Scope: Node.js application
             The tool must be compatible with Node.js version 14.x or later and headless Google Chrome (current version).
 
-        Trait:
+        Scope:
             Use the latest available stable version of puppeteer for rendering.
 
-        Trait:
+        Scope:
             Use the latest available stable version of yargs for command line options.
 
-        Trait:
+        Scope:
             Use the latest available stable version of axios to handle the HTTP requests.
 
-        Trait:
+        Scope:
             Use the latest available stable version of fast-xml-parser to handle the XML parsing.
 
-        Trait:
+        Scope:
             Any package dependencies that you might need must be explicitly stated in these requirements.  If you need to
             use a dependency that is not listed here then ask for approval or use a different approach.
 
-        Trait:
+        Scope:
             Use JSDoc annotations for all functions.
 
-        Trait:
+        Scope:
             Use 4 spaces for indentation in the source code.
 
-        Trait:
+        Scope:
             Where any functions may throw errors, include try/catch blocks to handle those error conditions.
 
-        Trait:
+        Scope:
             For code style, do not use an "else" if the previous block in an if statement ends with a "return" statement.
 
-        Trait:
+        Scope:
             The core logic of the tool should go in a file, "logic.ts", while the command line processing capabilities
             should go in a file "siterender.ts".
 
-    Trait: Quality
+    Scope: Quality
         As a software maintainer for the tool, I would like there to be comprehensive test coverage for the tool,
         so any modifications can be checked to ensure they work correctly.
 
-        Trait:
+        Scope:
             The logic of the tool in "logic.ts" must be able to be tested using the Jest framework.
 
-        Trait:
+        Scope:
             The tests should cover as many lines of code and as many branches as possible.
 
-    Trait: Previous version
-        Trait: Previous tool implementation
+    Scope: Previous version
+        Scope: Iterate from previous tool version
             An implementation of the tool is provided here.  It may not accurately reflect the
             requirements stated previously, in which case it will need to be modified to support them.
 
             Code: src/siterender.ts
             Code: src/logic.ts
 
-        Trait: Previous test implementation
-            An implementation of the tests for src/logic.ts is provided here:
+        Scope: Iterate from previous test version
+            An implementation of the tests for src/logic.ts is provided here.  Any test file only relates to the
+            matching implementation file in the tool.
 
             Code: src/logic.test.ts
