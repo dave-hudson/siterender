@@ -1,11 +1,11 @@
-Product: Site rendering application
+Scope: Site rendering application
     I have a single page application website and want to pre-render all the pages so I can allow the website to be
     crawled by spiders that cannot render JavaScript.
 
     As a website developer, I want to pre-render all the pages of my website, so I can allow the website to be
     crawled by spiders that cannot render JavaScript.
 
-    I require an tool that can scan a sitemap.xml file, determine all of the web pages available in the website
+    This is the scope of a tool that can scan a "sitemap.xml" file, determine all of the web pages available in the website
     described by that file and pre-render them all to an output directory.
 
     Scope: Sitemap handling
@@ -23,7 +23,7 @@ Product: Site rendering application
 
         Scope: Support replacing URL elements
             As a sitemap and files may be being served from a development server the tool must support replacing the protocol
-            and hostname in the sitemap URLs with an alternative.  This will be implemented via the --replace-url argument.
+            and hostname in the sitemap URLs with an alternative.  This will be implemented via the "--replace-url" argument.
 
     Scope: Rendering
         Scope: Output
@@ -222,16 +222,3 @@ Product: Site rendering application
         Scope: Test coverage
             The tests should cover as many lines of code and as many branches as possible.
 
-    Scope: Previous version
-        Scope: Iterate from previous tool version
-            An implementation of the tool is provided here.  It may not accurately reflect the
-            requirements stated previously, in which case it will need to be modified to support them.
-
-            Code: src/siterender.ts
-            Code: src/logic.ts
-
-        Scope: Iterate from previous test version
-            An implementation of the tests for src/logic.ts is provided here.  Any test file only relates to the
-            matching implementation file in the tool.
-
-            Code: src/logic.test.ts
