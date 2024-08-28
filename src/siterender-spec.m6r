@@ -86,7 +86,8 @@ Scope: Site rendering application
 
         Scope: Backoff mechanism
             If a failure occurs, wait 1 second before attempting the retry, then apply exponential backoff up to a maximum
-            of 8 seconds.
+            of 8 seconds.  Also add a random amount of jitter, up to 1 second to the exponential amount to ensure we do
+            not synchronize retries.
 
         Scope: Exit if retries fail
             The tool should exit with an error status if any page fails to render after retries.
@@ -222,3 +223,6 @@ Scope: Site rendering application
         Scope: Test coverage
             The tests should cover as many lines of code and as many branches as possible.
 
+        Scope: Do not export functions to make them testable
+            A function should not be exported solely to test it.  Instead, it should be exercised via the exposed
+            functions that make use of it.

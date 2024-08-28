@@ -4,6 +4,9 @@ Target: Site rendering application
     specification then identify the number of the scope item that is not met, describe what needs to change and why,
     and then provide the modified files.
 
+    Unless there is an error, or a modification is required, please do not change any of the formatting of the
+    current code, but please identify where you think such changes might be required and why.
+
     Inject: src/siterender-spec.m6r
 
     Scope: Previous version
