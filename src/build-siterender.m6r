@@ -7,7 +7,7 @@ Target: Site rendering application
     Unless there is an error, or a modification is required, please do not change any of the formatting of the
     current code, but please identify where you think such changes might be required and why.
 
-    Inject: src/siterender-spec.m6r
+    Include: src/siterender-spec.m6r
 
     Scope: Previous version
         The siterender tool has already been built before.

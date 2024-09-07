@@ -203,7 +203,7 @@ Scope: Site rendering application
             Use 4 spaces for indentation in the source code.
 
         Scope: Formatting of braces on the same line
-            For scenarios where braces, { and }, are used on the same line, please do not insert additional space
+            For scenarios where braces, { and }, are used on the same line, do not insert additional space
             after { and before }.
 
         Scope: Exception handling
