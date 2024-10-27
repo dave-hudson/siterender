@@ -1,4 +1,4 @@
-Target: Site rendering application
+Action: Site rendering application
     Please review the specification for a site rendering tool.  It is followed by a previous version of the tool.
     If any modifications are required to update the previous implementation and its tests to match the latest
     specification then identify the number of the scope item that is not met, describe what needs to change and why,
@@ -9,15 +9,15 @@ Target: Site rendering application
 
     Include: src/siterender-spec.m6r
 
-    Scope: Previous version
+    Context: Previous version
         The siterender tool has already been built before.
 
         The earlier versions many not accurately reflect the requirements already state, in which case this version
         will need to be modified to support the defined requirements.
 
-        Scope: Previous tool version
+        Context: Previous tool version
             Embed: src/siterender.ts
             Embed: src/logic.ts
 
-        Scope: Previous test version
+        Context: Previous test version
             Embed: src/logic.test.ts

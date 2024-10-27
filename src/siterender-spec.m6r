@@ -1,4 +1,4 @@
-Scope: Site rendering application
+Context: Site rendering application
     I have a single page application website and want to pre-render all the pages so I can allow the website to be
     crawled by spiders that cannot render JavaScript.
 
@@ -8,225 +8,224 @@ Scope: Site rendering application
     This is the scope of a tool that can scan a "sitemap.xml" file, determine all of the web pages available in the website
     described by that file and pre-render them all to an output directory.
 
-    Scope: Sitemap handling
-        Scope: Sitemap can be a file or URL
+    Context: Sitemap handling
+        Context: Sitemap can be a file or URL
             The sitemap will be defined by either a file or a URL.  Either option can be provided but not both, and one
             option must be provided by the user.
 
-        Scope: Sitemap index files
+        Context: Sitemap index files
             The logic should handle either a sitemap or a sitemap index.  If it encounters a sitemap index then it must
             process all the individual sitemaps within the sitemap index.
 
-        Scope: HTTP redirects
+        Context: HTTP redirects
             If the response from the web server to fetching the sitemap via a URL is redirect status code then log the
             new URL and load from that URL instead.
 
-        Scope: Support replacing URL elements
+        Context: Support replacing URL elements
             As a sitemap and files may be being served from a development server the tool must support replacing the protocol
             and hostname in the sitemap URLs with an alternative.  This will be implemented via the "--replace-url" argument.
 
-    Scope: Rendering
-        Scope: Output
+    Context: Rendering
+        Context: Output
             Rendered pages must be saved in a specified output directory.
 
-        Scope: Output structure
+        Context: Output structure
             For each page, the directory structure should match the URL path, but should not include the hostname or
             any port number.
 
-        Scope: Handling of URL paths
+        Context: Handling of URL paths
             If the page does not have an explicit ".html" or ".htm" name then assume it is a directory and create a file
             "index.html" as the file name within that output directory.
 
-            Example:
-                Given the tool is scanning URLs for the website "https://davehudson.io", when the tool has found a
-                URL "https://davehudson.io/blog/post", then the output file should be saved as
-                "<output-directory>/blog/post/index.html" where <output-directory> is the path specified as the output
-                directory.
+            Given the tool is scanning URLs for the website "https://davehudson.io", when the tool has found a
+            URL "https://davehudson.io/blog/post", then the output file should be saved as
+            "<output-directory>/blog/post/index.html" where <output-directory> is the path specified as the output
+            directory.
 
-        Scope: Output directory operations
+        Context: Output directory operations
             If the output directory or any subdirectories do not exist then they should be created.  If creating the
             directories fails then emit a failure message to the console and exit with an error status.
 
-        Scope: Do not render until previous output has been deleted
+        Context: Do not render until previous output has been deleted
             Once the directory structure is in place and all old index.html files have been deleted, render all the pages.
             Do not attempt to start rendering until the old files are deleted and the new output directories have been created.
 
-        Scope: Preserve other previous files and directories
+        Context: Preserve other previous files and directories
             The tool must not delete any file or directory that will not be written as an output file.
 
-        Scope: Handling of filesystem failures
+        Context: Handling of filesystem failures
             If any file or directory operations fail, then log a message to the console and exit with an error status.
 
-        Scope: Start next render when one finishes
+        Context: Start next render when one finishes
             As soon as a render completes then the next available render should be started.
 
-        Scope: Handle network errors
+        Context: Handle network errors
             The tool should handle network errors, timeouts, and rendering errors.
 
-        Scope: Graceful failure from errors
+        Context: Graceful failure from errors
             In the event of any errors, ensure that all puppeteer resources are released correctly.
 
-    Scope: Performance
-        Scope: Render pages in parallel
+    Context: Performance
+        Context: Render pages in parallel
             The tool should parallelize rendering operations.
 
-        Scope: Default number of parallel renders
+        Context: Default number of parallel renders
             The default number of parallel tasks should default to the number of available CPU cores.
 
-        Scope: Use just one instance of puppeteer
+        Context: Use just one instance of puppeteer
             For performance reasons, only start puppeteer once.
 
 
-    Scope: Retry mechanism
-        Scope: Retry rendering failures
+    Context: Retry mechanism
+        Context: Retry rendering failures
             In the event of a failure to render a URL, use a retry mechanism with a default of 3 retries.
 
-        Scope: Failures in scope
+        Context: Failures in scope
             The retry mechanism should be applied to invocations of puppeteer as well as for network failures.
 
-        Scope: Backoff mechanism
+        Context: Backoff mechanism
             If a failure occurs, wait 1 second before attempting the retry, then apply exponential backoff up to a maximum
             of 8 seconds.  Also add a random amount of jitter, up to 1 second to the exponential amount to ensure we do
             not synchronize retries.
 
-        Scope: Exit if retries fail
+        Context: Exit if retries fail
             The tool should exit with an error status if any page fails to render after retries.
 
-    Scope: Exit status
-        Scope: Success status
+    Context: Exit status
+        Context: Success status
             If all pages render successfully, exit with a success status.
 
-        Scope: Failure status
+        Context: Failure status
             If any of the pages fail to render successfully, and all retries have failed, then exit with a failure status.
 
-    Scope: Tool invocation
+    Context: Tool invocation
         As a website developer, I would like to start my pre-render tool from the command line, so I can easily
         configure the behaviour I want.
 
-        Scope: Command line tool
+        Context: Command line tool
             The tool will be run from the command line with appropriate arguments.
 
-        Scope: No config file
+        Context: No config file
             The tool does not need a configuration file.
 
-        Scope: "--sitemap-file" argument
+        Context: "--sitemap-file" argument
             If the sitemap is being defined by a file then the "--sitemap-file" argument will define where to find
             the sitemap file.
 
-        Scope: "--sitemap-url" argument
+        Context: "--sitemap-url" argument
             If the sitemap is being defined by a URL then the "--sitemap-url" argument will define the URL where to
             find the sitemap file.
 
-        Scope: "--output" argument
+        Context: "--output" argument
             The output directory is defined by the non-optional "--output" argument.
 
-        Scope: "--parallel-renders" argument
+        Context: "--parallel-renders" argument
             The number of parallel tasks can be configured using the optional "--parallel-renders" argument.
 
-        Scope: "--max-retries" argument
+        Context: "--max-retries" argument
             The number of retries can be configured using the optional "--max-retries" argument.
 
-        Scope: "--replace-url" argument
+        Context: "--replace-url" argument
             If the user wishes to replace the start of a URL read in a sitemap file will a new prefix, this will be
             done using the "--replace-url" argument.  The "--replace-url" parameter should take the form
             "<new-url-prefix>=<old-url-prefix>".  Note that the URL prefix may include a port number as well as a
             domain name and protocol.
 
-        Scope: "--help" argument
+        Context: "--help" argument
             If the user specifies a "-h" or "--help" argument then display a help message with all valid arguments,
             any parameters they may have, and their usage.
 
-        Scope: Check all arguments
+        Context: Check all arguments
             If the tool is invoked with unknown arguments, display correct usage information.
 
-        Scope: Check all argument parameters
+        Context: Check all argument parameters
             The tool must check that the form of all parameters correctly matches what is expected for each
             command line argument.
 
             If the tool is invoked with invalid parameters, display correct usage information.
 
-    Scope: Logging
-        Scope: Progress reporting
+    Context: Logging
+        Context: Progress reporting
             Emit console messages for progress and errors.
 
-        Scope: No file logging
+        Context: No file logging
             The tool does not need to log to a file.
 
-        Scope: Sitemap index logging
+        Context: Sitemap index logging
             When the tool encounters a sitemap index it should emit a console message: "Processing sitemap index: <name>", where
             <name> is the name of the sitemap index file.
 
-        Scope: Sitemap file logging
+        Context: Sitemap file logging
             For each sitemap, including all those found in a sitemap index, emit a console message:
             "Processing sitemap: <name>", where <name> is the name of the sitemap file.
 
-        Scope: Success messages
+        Context: Success messages
             If a URL is successfully rendered, emit a console message “Rendered: <url>”, where <url> is the URL has been
             rendered.
 
-        Scope: Failure messages
+        Context: Failure messages
             If a URL fails to render successfully, emit a console message “Failed: <url>: <reason>”, where <url> is the
             URL being processed, and <reason> is the failure reason.
 
-        Scope:
+        Context:
             There should be no other console messages.
 
-    Scope: Implementation and dependencies
+    Context: Implementation and dependencies
         As a website developer, I want the implementation to be easy to maintain, so I want to use a well-defined
         set of coding standards and dependencies.
 
-        Scope: Implement in TypeScript
+        Context: Implement in TypeScript
             The tool should be build using TypeScript.
 
-        Scope: Node.js application
+        Context: Node.js application
             The tool should be built as a script for Node.js 14.x or later and must use ES6 modules.
 
-        Scope: Use puppeteer
+        Context: Use puppeteer
             Use the latest available stable version of puppeteer for rendering via headless Google Chrome.
 
-        Scope: Use yargs
+        Context: Use yargs
             Use the latest available stable version of yargs for command line options.
 
-        Scope: Use axios
+        Context: Use axios
             Use the latest available stable version of axios to handle the HTTP requests.
 
-        Scope: Use fast-xml-parser
+        Context: Use fast-xml-parser
             Use the latest available stable version of fast-xml-parser to handle the XML parsing.
 
-        Scope: No other dependencies
+        Context: No other dependencies
             Do not use any package dependencies that are not explicitly stated in these requirements.
 
-        Scope: JSDoc annotations
+        Context: JSDoc annotations
             Use JSDoc annotations for all functions.
 
-        Scope: Source code indentation
+        Context: Source code indentation
             Use 4 spaces for indentation in the source code.
 
-        Scope: Formatting of braces on the same line
+        Context: Formatting of braces on the same line
             For scenarios where braces, { and }, are used on the same line, do not insert additional space
             after { and before }.
 
-        Scope: Exception handling
+        Context: Exception handling
             Where any functions may throw errors, include try/catch blocks to handle those error conditions.
 
-        Scope: Do not use unnecessary else statements
+        Context: Do not use unnecessary else statements
             For code style, do not use an "else" if the previous block in an if statement ends with a "return" statement.
 
-        Scope: File partitioning
+        Context: File partitioning
             The core logic of the tool should go in a file, "logic.ts", while the command line processing capabilities
             should go in a file "siterender.ts".
 
-    Scope: Quality
+    Context: Quality
         As a software maintainer for the tool, I would like there to be comprehensive test coverage for the tool,
         so any modifications can be checked to ensure they work correctly.
 
-        Scope: Unit test files
+        Context: Unit test files
             The logic of the tool in "logic.ts" must be able to be tested using the Jest framework.  The tests should
             go in "logic.test.ts".
 
-        Scope: Test coverage
+        Context: Test coverage
             The tests should cover as many lines of code and as many branches as possible.
 
-        Scope: Do not export functions to make them testable
+        Context: Do not export functions to make them testable
             A function should not be exported solely to test it.  Instead, it should be exercised via the exposed
             functions that make use of it.
