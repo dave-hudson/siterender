@@ -1,12 +1,4 @@
-Action: Site rendering application
-    Please review the specification for a site rendering tool.  It is followed by a previous version of the tool.
-    If any modifications are required to update the previous implementation and its tests to match the latest
-    specification then identify the number of the scope item that is not met, describe what needs to change and why,
-    and then provide the modified files.
-
-    Unless there is an error, or a modification is required, please do not change any of the formatting of the
-    current code, but please identify where you think such changes might be required and why.
-
+Context: Siterender application
     Include: src/siterender-spec.m6r
 
     Context: Previous version
@@ -21,3 +13,12 @@ Action: Site rendering application
 
         Context: Previous test version
             Embed: src/logic.test.ts
+
+Action: Site rendering application
+    Please review the specification for a site rendering tool.  It is followed by a previous version of the tool.
+    If any modifications are required to update the previous implementation and its tests to match the latest
+    specification then identify the number of the scope item that is not met, describe what needs to change and why,
+    and then provide the modified files.
+
+    Unless there is an error, or a modification is required, please do not change any of the formatting of the
+    current code, but please identify where you think such changes might be required and why.
